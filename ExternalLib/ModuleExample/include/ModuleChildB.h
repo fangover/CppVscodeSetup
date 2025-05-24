@@ -1,5 +1,5 @@
-#ifndef MAINAPP_INCLUDE_MODULECHILD_B_H
-#define MAINAPP_INCLUDE_MODULECHILD_B_H
+#ifndef EXTERNAL_LIB_INCLUDE_MODULECHILD_B_H
+#define EXTERNAL_LIB_INCLUDE_MODULECHILD_B_H
 #include <iostream>
 #include "../interface/iModule.h"
 
@@ -10,13 +10,13 @@ namespace ModuleOopTest
     public:
         ChildB() = default;
         ~ChildB() = default;
-        void print() const override { std::cout << typeid(this).name() << " Value: " << m_iValue << std::endl; };
-        void setValue(const int iValue) override { m_iValue = iValue; };
-        int getValue() const override { return m_iValue; };
+        void print() const override;
+        void setValue(const int iValue) override;
+        int getValue() const override;
 
     private:
         int m_iValue = 2;
     };
 
 }
-#endif // MAINAPP_INCLUDE_MODULECHILD_B_H
+#endif // EXTERNAL_LIB_INCLUDE_MODULECHILD_B_H

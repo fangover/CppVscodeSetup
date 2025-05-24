@@ -1,5 +1,5 @@
-#ifndef MAINAPP_INCLUDE_COPYELISION_H
-#define MAINAPP_INCLUDE_COPYELISION_H
+#ifndef EXTERNAL_LIB_COPYELISION_INCLUDE_H
+#define EXTERNAL_LIB_COPYELISION_INCLUDE_H
 namespace CopyElision
 {
     struct Example
@@ -10,4 +10,4 @@ namespace CopyElision
     Example create() { return Example{}; } // avoids copy even if copy ctor is deleted
 
 }
-#endif // MAINAPP_INCLUDE_COPYELISION_H
+#endif // EXTERNAL_LIB_COPYELISION_INCLUDE_H
