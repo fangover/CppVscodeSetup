@@ -1,0 +1,17 @@
+
+
+Enviorment setup.
+-------------------------------------------
+Done - Setup buildable C++ vsCode platform
+- Improve programming extension and setup.
+- CMAKE setup.
+- Develop libaries framework.
+- Architect framework, scalable setup.
+
+Main Project.
+-------------------------------------------
+
+Goals.
+- Personal tutorial in cpp framework and project setup
+- Research on good Graphical & GUI framework.(OpenGL & IMGUI)
+- Implement Graphical & GUI framework.
