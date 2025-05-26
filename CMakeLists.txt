@@ -41,6 +41,7 @@ add_compile_options(
 include_directories(
     ${CMAKE_SOURCE_DIR}  # Add project root to includes
     MainApp/include
+    ExternalLib/EResult/include
     ExternalLib/FileStream/include
     ExternalLib/Logs/include
     # Add other external libraries here

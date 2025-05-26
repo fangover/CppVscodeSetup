@@ -3,10 +3,10 @@
 template <typename T>
 void testModuleSet()
 {
-    auto module = std::make_unique<T>();
-    module->print();
-    module->setValue(module->getValue() + (typeid(T) == typeid(ModuleOopTest::ChildA) ? 1 : 10));
-    module->print();
+    auto pModule = std::make_unique<T>();
+    pModule->print();
+    pModule->setValue(pModule->getValue() + (typeid(T) == typeid(ModuleOopTest::ChildA) ? 1 : 10));
+    pModule->print();
 }
 #define COMPILE_TIME_MAX 10
 
@@ -25,24 +25,29 @@ void testFunction()
     LOG("This log will never display too!");
 }
 
-void test_log_rotation()
+void testLogRotation()
 {
     LOG_ENTRY;
 
     // Generate approximately 6MB of log data
-    const int iterations = 600;    // Number of log entries
-    const int payload_size = 1024; // 1KB per message
+    const int iIterations = 600;   // Number of log entries
+    const int iPayloadSize = 1024; // 1KB per message
 
-    for (int i = 1; i <= iterations; ++i)
+    for (int i = 1; i <= iIterations; ++i)
     {
-        std::string payload(payload_size, 'A' + (i % 26));
+        std::string payload(iPayloadSize, 'A' + (i % 26));
         LOG("Rotation test message %04d: %s", i, payload.c_str());
         if (i % 100 == 0)
         {
             printf("Generated %d/%d log messages (%.2fMB)\n",
-                   i, iterations, (i * payload_size) / 1024.0f / 1024.0f);
+                   i, iIterations, (i * iPayloadSize) / 1024.0f / 1024.0f);
         }
     }
 
     LOG("Log rotation test completed");
+}
+
+EResult testEResult(bool bTestPass)
+{
+    return bTestPass ? EResult::ok() : EResult::fail("testEResult Fail log");
 }

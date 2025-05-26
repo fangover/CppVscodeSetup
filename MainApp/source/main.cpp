@@ -1,5 +1,6 @@
 #include <FileStreamHandle.h>
 #include <BasicStdLib.h>
+#include <eresult.h>
 
 #include "CppExamples/ModuleExample/interface/iModule.h"
 #include "CppExamples/ModuleExample/include/ModuleChildA.h"
@@ -10,11 +11,17 @@
 
 int main()
 {
+
+    EResult oResEResultTest = testEResult(false);
+    LOG_IF_FAILED(oResEResultTest.isOk(), "Testing testEResult(false) : oResEResultTest.isOk() - %s", oResEResultTest.error());
+    oResEResultTest = testEResult(true);
+    LOG_IF_FAILED(oResEResultTest.isFail(), "Testing testEResult(true) : oResEResultTest.isFail() - %s", oResEResultTest.error());
+
     //------------------------------------------------------------------------------
     // Test logger marcos.
     //------------------------------------------------------------------------------
     testFunction();
-    // test_log_rotation();
+    // testLogRotation();
 
     //------------------------------------------------------------------------------
     // Use an unnamed (anonymous) namespace for all internal/non-exported entities
