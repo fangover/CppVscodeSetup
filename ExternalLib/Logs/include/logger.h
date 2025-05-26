@@ -8,16 +8,12 @@
 
 class Logger
 {
-private:
-    static std::mutex s_logMutex;
-    static constexpr std::string_view s_cstrLogDir = "build/out/log";
-    static constexpr size_t s_ciMaxLogSize = 5 * 1024 * 1024;
-
-    Logger();
-
 public:
+    Logger();
     Logger(const Logger &) = delete;
     Logger &operator=(const Logger &) = delete;
+    Logger(Logger &&) = delete;
+    Logger &operator=(Logger &&) = delete;
 
     static Logger &instance();
 
@@ -45,6 +41,10 @@ private:
 
     static const std::string getTimeStamp(const std::string);
     static void rotateLog(const std::filesystem::path &);
+
+    static std::mutex s_logMutex;
+    static constexpr std::string_view s_cstrLogDir = "build/out/log";
+    static constexpr size_t s_ciMaxLogSize = 5 * 1024 * 1024;
 };
 
 class ScopeLogger
