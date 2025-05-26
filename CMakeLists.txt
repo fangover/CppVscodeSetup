@@ -5,11 +5,26 @@ project(CPPSetup_Project)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Set output directories
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
+# Set a clean base output directory
+set(CLEAN_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/build)
+
+# Set specific output folders for different types of targets
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CLEAN_OUTPUT_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CLEAN_OUTPUT_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CLEAN_OUTPUT_DIR}/bin)
+
+# Optional: handle multi-config generators (like Visual Studio)
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG_UPPER)
+
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${CLEAN_OUTPUT_DIR}/lib)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${CLEAN_OUTPUT_DIR}/lib)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${CLEAN_OUTPUT_DIR}/bin)
+endforeach()
+
+
 
 # Add compiler flags
 add_compile_options(
@@ -26,18 +41,18 @@ add_compile_options(
 include_directories(
     ${CMAKE_SOURCE_DIR}  # Add project root to includes
     MainApp/include
-    ExternalLib/CopyElision/include
-    ExternalLib/ModuleExample/include
-    ExternalLib/StandardDefines/include
+    ExternalLib/FileStream/include
+    ExternalLib/Logs/include
     # Add other external libraries here
 )
 
 # Find all source files
 file(GLOB_RECURSE SOURCES
     "MainApp/source/*.cpp"
-    "ExternalLib/ModuleExample/source/*.cpp"
     "ExternalLib/FileStream/source/*.cpp"
-    "ExternalLib/StandardDefines/source/*.cpp"
+    "ExternalLib/Logs/source/*.cpp"
+    "CppExamples/ModuleExample/source/*.cpp"
+
     # Add other source directories here
 )
 

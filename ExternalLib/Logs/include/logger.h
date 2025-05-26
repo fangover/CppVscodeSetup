@@ -6,21 +6,11 @@
 #include <filesystem>
 #include <cstdarg>
 
-// ANSI color codes
-enum class Elvl
-{
-    FATAL,
-    TRY,
-    LOG,
-    Enter,
-    EXIT
-};
-
 class Logger
 {
 private:
     static std::mutex log_mutex_;
-    static constexpr std::string_view log_dir_ = "out/log";
+    static constexpr std::string_view log_dir_ = "build/out/log";
     static constexpr size_t max_log_size_ = 5 * 1024 * 1024;
 
     Logger();

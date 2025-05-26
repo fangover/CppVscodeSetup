@@ -43,7 +43,7 @@
         {
             "label": "Run",
             "type": "shell",
-            "command": "${workspaceFolder}/build/main.exe",
+            "command": "${workspaceFolder}/build/bin/main.exe",
             "group": "build",
             "dependsOn": "CMake: Build",
             "presentation": {

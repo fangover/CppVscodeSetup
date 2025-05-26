@@ -1,5 +1,5 @@
-#ifndef EXTERNAL_LIB_COPYELISION_INCLUDE_COPYELISION_H
-#define EXTERNAL_LIB_COPYELISION_INCLUDE_COPYELISION_H
+#ifndef CPPEXAMPLES_COPYELISION_INCLUDE_COPYELISION_H
+#define CPPEXAMPLES_COPYELISION_INCLUDE_COPYELISION_H
 namespace CopyElision
 {
     struct Example
@@ -10,4 +10,4 @@ namespace CopyElision
     Example create() { return Example{}; } // avoids copy even if copy ctor is deleted
 
 }
-#endif // EXTERNAL_LIB_COPYELISION_INCLUDE_COPYELISION_H
+#endif // EXTERNAL_COPYELISION_INCLUDE_COPYELISION_H

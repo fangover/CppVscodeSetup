@@ -1,5 +1,5 @@
-#ifndef MAINAPP_INTERFACE_IMODULE_H
-#define MAINAPP_INTERFACE_IMODULE_H
+#ifndef CPPEXAMPLES_MODULEEXAMPLE_INTERFACE_IMODULE_H
+#define CPPEXAMPLES_MODULEEXAMPLE_INTERFACE_IMODULE_H
 namespace ModuleOopTest
 {
     class IModuleBase
@@ -11,4 +11,4 @@ namespace ModuleOopTest
         virtual int getValue() const = 0;
     };
 }
-#endif // MAINAPP_INTERFACE_IMODULE_H
+#endif // CPPEXAMPLES_MODULEEXAMPLE_INTERFACE_IMODULE_H

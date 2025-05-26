@@ -3,8 +3,9 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
+#include <log.h>
 
-#include "../include/FileStreamUseCase.h"
+#include "../include/FileStreamHandle.h"
 
 using namespace FileStream;
 
@@ -21,14 +22,12 @@ FileHandle::FileHandle(const std::string &cstrName, std::ios::openmode mode)
     }
 
     m_ofsFile.open(cstrName, mode);
-    if (!m_ofsFile.is_open())
-    {
-        std::cerr << "Error opening file: " << cstrName << std::endl;
-    }
+    LOG_IF_FAILED(m_ofsFile.is_open(), "Error opening file: ", cstrName);
 }
 
 FileHandle::~FileHandle()
 {
+    LOG_ENTRY;
 
     if (m_ofsFile)
         m_ofsFile.close();
@@ -36,17 +35,15 @@ FileHandle::~FileHandle()
 
 void FileHandle::readFile() const
 {
+    LOG_ENTRY;
+
     if (m_ofsFile.is_open())
     {
         m_ofsFile.flush(); // Ensure all buffered data is written
     }
 
     std::ifstream inFile(m_strFileName);
-    if (!inFile.is_open())
-    {
-        std::cerr << "Error opening file for reading!" << std::endl;
-        return;
-    }
+    TRY(inFile.is_open());
 
     std::string line;
     while (std::getline(inFile, line))
@@ -58,6 +55,8 @@ void FileHandle::readFile() const
 
 void FileHandle::clearFile() const
 {
+    LOG_ENTRY;
+
     std::ofstream ofs;
     ofs.open(m_strFileName, std::ofstream::out | std::ofstream::trunc);
     ofs.close();
