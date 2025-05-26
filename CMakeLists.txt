@@ -28,6 +28,7 @@ include_directories(
     MainApp/include
     ExternalLib/CopyElision/include
     ExternalLib/ModuleExample/include
+    ExternalLib/StandardDefines/include
     # Add other external libraries here
 )
 
@@ -36,6 +37,7 @@ file(GLOB_RECURSE SOURCES
     "MainApp/source/*.cpp"
     "ExternalLib/ModuleExample/source/*.cpp"
     "ExternalLib/FileStream/source/*.cpp"
+    "ExternalLib/StandardDefines/source/*.cpp"
     # Add other source directories here
 )
 
