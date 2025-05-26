@@ -9,9 +9,9 @@
 class Logger
 {
 private:
-    static std::mutex log_mutex_;
-    static constexpr std::string_view log_dir_ = "build/out/log";
-    static constexpr size_t max_log_size_ = 5 * 1024 * 1024;
+    static std::mutex s_logMutex;
+    static constexpr std::string_view s_cstrLogDir = "build/out/log";
+    static constexpr size_t s_ciMaxLogSize = 5 * 1024 * 1024;
 
     Logger();
 
@@ -21,30 +21,36 @@ public:
 
     static Logger &instance();
 
-    static void logMessage(const char *level, const char *file, int line,
-                           const char *func, const char *fmt = "", ...);
+    static void logMessage(const char *,
+                           const char *,
+                           int,
+                           const char *,
+                           const char * = "", ...);
 
 private:
-    static std::string formatMessage(const char *fmt, va_list args);
-    static std::string formatLogMessage(std::string &timestamp, const char *level,
-                                        const char *file, int line, const char *func,
-                                        const std::string &message);
+    static std::string formatMessage(const char *, va_list);
+    static std::string formatLogMessage(std::string &,
+                                        const char *,
+                                        const char *,
+                                        int,
+                                        const char *,
+                                        const std::string &);
 
-    static void printConsole(const std::string &message);
-    static void writeToFile(const std::filesystem::path &path, const std::string &message);
+    static void printConsole(const std::string &);
+    static void writeToFile(const std::filesystem::path &, const std::string &);
 
-    static const char *filename_from_path(const char *path);
+    static const char *filename_from_path(const char *);
     static std::filesystem::path prepareLogFile();
     static std::filesystem::path getLogPath();
 
-    static const std::string getTimeStamp(const std::string cstrTimeFormat);
-    static void rotateLog(const std::filesystem::path &log_path);
+    static const std::string getTimeStamp(const std::string);
+    static void rotateLog(const std::filesystem::path &);
 };
 
 class ScopeLogger
 {
 public:
-    ScopeLogger(const char *file, int line, const char *func);
+    ScopeLogger(const char *, int, const char *);
     ~ScopeLogger() noexcept;
 
 private:

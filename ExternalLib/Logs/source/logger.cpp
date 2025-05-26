@@ -10,13 +10,7 @@
 
 #include "../include/logger.h"
 
-#ifdef _WIN32
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
-
-std::mutex Logger::log_mutex_;
+std::mutex Logger::s_logMutex;
 
 Logger::Logger() = default;
 
@@ -26,24 +20,27 @@ Logger &Logger::instance()
     return logger;
 }
 
-void Logger::logMessage(const char *level, const char *file, int line,
-                        const char *func, const char *fmt, ...)
+void Logger::logMessage(const char *cpLevel,
+                        const char *cpFile,
+                        int ciLine,
+                        const char *cpfunc,
+                        const char *cpfmt, ...)
 {
-    std::lock_guard<std::mutex> lock(log_mutex_);
+    std::lock_guard<std::mutex> lock(s_logMutex);
     std::string timestamp = getTimeStamp("%Y-%m-%d %T");
 
     va_list args;
-    va_start(args, fmt);
-    std::string message = formatMessage(fmt, args);
+    va_start(args, cpfmt);
+    std::string strMessage = formatMessage(cpfmt, args);
     va_end(args);
 
-    message = formatLogMessage(timestamp, level, file, line, func, message);
-    printConsole(message);
+    strMessage = formatLogMessage(timestamp, cpLevel, cpFile, ciLine, cpfunc, strMessage);
+    printConsole(strMessage);
 
-    auto log_path = prepareLogFile();
-    if (!log_path.empty())
+    auto strLogPath = prepareLogFile();
+    if (!strLogPath.empty())
     {
-        writeToFile(log_path, message);
+        writeToFile(strLogPath, strMessage);
     }
 }
 
@@ -64,62 +61,65 @@ std::string Logger::formatMessage(const char *fmt, va_list args)
     return message;
 }
 
-std::string Logger::formatLogMessage(std::string &timestamp, const char *level,
-                                     const char *file, int line, const char *func,
-                                     const std::string &message)
+std::string Logger::formatLogMessage(std::string &cstrTimestamp,
+                                     const char *cclevel,
+                                     const char *ccfile,
+                                     int iLine,
+                                     const char *ccfunc,
+                                     const std::string &cstrMessage)
 {
     // E.g. output [2025-05-26 15:51:46] [main.cpp:24] [LOG] testFunction - LOG function try out
-    const char *filename = filename_from_path(file);
+    const char *filename = filename_from_path(ccfile);
     std::ostringstream oss;
 
-    oss << "[" << timestamp << "] "
-        << "[" << filename << ":" << line << "] "
-        << "[" << level << "] "
-        << func;
+    oss << "[" << cstrTimestamp << "] "
+        << "[" << filename << ":" << iLine << "] "
+        << "[" << cclevel << "] "
+        << ccfunc;
 
-    if (!message.empty())
-        oss << " - " << message;
+    if (!cstrMessage.empty())
+        oss << " - " << cstrMessage;
     oss << std::endl;
 
     return oss.str();
 }
 
-void Logger::printConsole(const std::string &message)
+void Logger::printConsole(const std::string &cstrMessage)
 {
-    std::printf(message.c_str());
+    std::printf(cstrMessage.c_str());
     std::fflush(stdout);
 }
 
-void Logger::writeToFile(const std::filesystem::path &path, const std::string &message)
+void Logger::writeToFile(const std::filesystem::path &coPath, const std::string &cstrMessage)
 {
-    std::ofstream log_file(path, std::ios::app);
-    if (log_file)
+    std::ofstream ofLogFile(coPath, std::ios::app);
+    if (ofLogFile)
     {
-        log_file << message.c_str();
+        ofLogFile << cstrMessage.c_str();
     }
 }
 
-const char *Logger::filename_from_path(const char *path)
+const char *Logger::filename_from_path(const char *cPath)
 {
-    const char *file = std::strrchr(path, '/');
-    const char *alt = std::strrchr(path, '\\');
+    const char *file = std::strrchr(cPath, '/');
+    const char *alt = std::strrchr(cPath, '\\');
     file = std::max(file, alt);
-    return file ? file + 1 : path;
+    return file ? file + 1 : cPath;
 }
 
 std::filesystem::path Logger::prepareLogFile()
 {
     try
     {
-        std::filesystem::create_directories(log_dir_);
-        auto log_path = getLogPath();
+        std::filesystem::create_directories(s_cstrLogDir);
+        auto oLogPath = getLogPath();
 
-        if (std::filesystem::exists(log_path) && std::filesystem::file_size(log_path) > max_log_size_)
+        if (std::filesystem::exists(oLogPath) && std::filesystem::file_size(oLogPath) > s_ciMaxLogSize)
         {
-            rotateLog(log_path);
+            rotateLog(oLogPath);
         }
 
-        return log_path;
+        return oLogPath;
     }
     catch (...)
     {
@@ -129,7 +129,7 @@ std::filesystem::path Logger::prepareLogFile()
 
 std::filesystem::path Logger::getLogPath()
 {
-    return std::filesystem::path(log_dir_) / (getTimeStamp("%d_%m_%y") + ".log");
+    return std::filesystem::path(s_cstrLogDir) / (getTimeStamp("%d_%m_%y") + ".log");
 }
 
 const std::string Logger::getTimeStamp(const std::string cstrTimeFormat)
@@ -155,30 +155,30 @@ const std::string Logger::getTimeStamp(const std::string cstrTimeFormat)
     }
 }
 
-void Logger::rotateLog(const std::filesystem::path &log_path)
+void Logger::rotateLog(const std::filesystem::path &coLogPath)
 {
     try
     {
-        if (!std::filesystem::exists(log_path))
+        if (!std::filesystem::exists(coLogPath))
             return;
 
-        std::string base_name = log_path.stem().string();
+        std::string strBasename = coLogPath.stem().string();
         int max_num = 0;
 
-        for (const auto &entry : std::filesystem::directory_iterator(log_dir_))
+        for (const auto &entry : std::filesystem::directory_iterator(s_cstrLogDir))
         {
-            std::string name = entry.path().filename().string();
-            std::regex pattern(base_name + R"(\.lo(\d+))");
-            std::smatch match;
-            if (std::regex_search(name, match, pattern))
+            std::string strName = entry.path().filename().string();
+            std::regex oPattern(strBasename + R"(\.lo(\d+))");
+            std::smatch oMatch;
+            if (std::regex_search(strName, oMatch, oPattern))
             {
-                int num = std::stoi(match[1].str());
+                int num = std::stoi(oMatch[1].str());
                 max_num = std::max(max_num, num);
             }
         }
 
-        std::filesystem::path new_name = std::filesystem::path(log_dir_) / (base_name + ".lo" + std::to_string(max_num + 1));
-        std::filesystem::rename(log_path, new_name);
+        std::filesystem::path new_name = std::filesystem::path(s_cstrLogDir) / (strBasename + ".lo" + std::to_string(max_num + 1));
+        std::filesystem::rename(coLogPath, new_name);
     }
     catch (...)
     {
